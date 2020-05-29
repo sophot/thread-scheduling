@@ -1,11 +1,14 @@
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <pthread.h>
 
-typedef struct myThread
+typedef struct
 {
     pthread_t myThread;
+    int pid;
     int burstTime;
+    int priority;
     int classNumber;
 } myThread;
 
@@ -74,7 +77,7 @@ void removeFirst(Queue *lL)
     }
 }
 
-void *getFirstElement(Queue *lL)
+myThread *getFirstElement(Queue *lL)
 {
     myThread *tempI;
     if (lL->head == NULL)
@@ -82,6 +85,15 @@ void *getFirstElement(Queue *lL)
     else
         tempI = lL->head->my_thread;
     return tempI;
+}
+
+myThread *getHighestPriority(Queue *lL){
+    myThread *tempI = lL->head;
+    myThread *highest;
+
+    while(tempI!= NULL){
+
+    }
 }
 
 void freeQueue(Queue *lL)
@@ -96,3 +108,17 @@ void freeQueue(Queue *lL)
     }
     free(lL); /*finally deallocates the list*/
 }
+
+bool isEmpty(Queue *lL){
+    return (lL->head == NULL);
+}
+
+void printQueue(Queue *lL){
+    QueueNode *tempPtr = lL->head;
+    printf("Process ID: ");
+    while(tempPtr != NULL){
+        printf("%d", tempPtr->my_thread->pid);
+        tempPtr = tempPtr->next;
+    }
+}
+
