@@ -24,6 +24,16 @@ typedef struct
     QueueNode *tail;
 } Queue;
 
+//API
+Queue *createList();
+void insertLast(Queue *, QueueNode *);
+myThread getFirst(Queue *);
+myThread getHighestPriority(Queue *);
+myThread getSmallestBurstTime(Queue *);
+void deleteNode(Queue *, myThread *);
+bool isEmpty(Queue *);
+
+//API CODE
 Queue *createList()
 {
     Queue *newLL = (Queue *)malloc(sizeof(Queue));
@@ -31,7 +41,7 @@ Queue *createList()
     newLL->head = NULL;
     newLL->tail = NULL;
     return newLL;
-};
+}
 
 void insertLast(Queue *lL, QueueNode *inElement)
 {
@@ -56,69 +66,77 @@ void insertLast(Queue *lL, QueueNode *inElement)
     }
 }
 
-void removeFirst(Queue *lL)
-{
-    QueueNode *tempPtr = lL->head;
-    /*checks to see if list is empty*/
-    if (tempPtr == NULL)
-        ;
-    else if (tempPtr == lL->tail)
-    {
-        // free(tempPtr->element);
-        free(tempPtr);
-        lL->head = NULL;
-        lL->tail = NULL;
-    }
-    else
-    {
-        lL->head = tempPtr->next;
-        // free(tempPtr->element);
-        free(tempPtr);
-    }
-}
-
-myThread *getFirstElement(Queue *lL)
+myThread getFirst(Queue *lL)
 {
     myThread *tempI;
     if (lL->head == NULL)
         tempI = NULL;
     else
         tempI = lL->head->my_thread;
-    return tempI;
+    return *tempI;
 }
 
-myThread *getHighestPriority(Queue *lL){
-    myThread *tempI = lL->head;
-    myThread *highest;
-
-    while(tempI!= NULL){
-
-    }
-}
-
-void freeQueue(Queue *lL)
+myThread getHighestPriority(Queue *lL)
 {
-    QueueNode *tempPtr;
-    tempPtr = lL->head;
-    while (tempPtr != NULL)
-        ;
+    QueueNode *tempI = lL->head;
+    myThread *highest = tempI->my_thread;
+
+    while (tempI != NULL)
     {
-        removeFirst(lL);
-        tempPtr = lL->head;
+        if (tempI->my_thread->priority < highest->priority)
+        {
+            highest = tempI->my_thread;
+        }
+        tempI = tempI->next;
     }
-    free(lL); /*finally deallocates the list*/
+    return *highest;
 }
 
-bool isEmpty(Queue *lL){
+myThread getSmallestBurstTime(Queue *lL)
+{
+    QueueNode *tempI = lL->head;
+    myThread *smallest = tempI->my_thread;
+
+    while (tempI != NULL)
+    {
+        if (tempI->my_thread->burstTime < smallest->burstTime)
+        {
+            smallest = tempI->my_thread;
+        }
+        tempI = tempI->next;
+    }
+    return *smallest;
+}
+
+void deleteNode(Queue *lL, myThread *th)
+{
+    QueueNode *tempI = lL->head, *prev;
+
+    // If head node itself holds the key to be deleted
+    if (tempI != NULL && tempI->my_thread->pid == th->pid)
+    {
+        lL->head = tempI->next; // Changed head
+        free(tempI);            // free old head
+        return;
+    }
+
+    while (tempI != NULL && tempI->my_thread->pid != th->pid)
+    {
+        prev = tempI;
+        tempI = tempI->next;
+    }
+
+    // If key was not present in linked list
+    if (tempI == NULL)
+        return;
+
+    // Unlink the node from linked list
+    prev->next = tempI->next;
+
+    free(tempI); // Free memory
+}
+
+bool isEmpty(Queue *lL)
+{
     return (lL->head == NULL);
 }
-
-void printQueue(Queue *lL){
-    QueueNode *tempPtr = lL->head;
-    printf("Process ID: ");
-    while(tempPtr != NULL){
-        printf("%d", tempPtr->my_thread->pid);
-        tempPtr = tempPtr->next;
-    }
-}
-
