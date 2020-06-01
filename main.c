@@ -1,3 +1,10 @@
+/*
+    Written by: SOPHOT KY 
+    Date: 2020. 05. 30
+    Inha University
+    OS Assignment
+*/
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdio.h>
@@ -14,7 +21,6 @@ void *schedule();
 
 int main(int argc, char *argv[])
 {
-    // printf("START\n");
     FILE *fileRead = fopen("input.txt", "r");
     fileWrite = fopen("output.txt", "a");
 
@@ -27,17 +33,17 @@ int main(int argc, char *argv[])
     FCFSQueue = createList();
     PriorityQueue = createList();
     SJFQueue = createList();
+
     int class_num, pid, priority, burstTime;
 
-    // for (int i = 0; i < MAX_THREAD; i++)
     while (fscanf(fileRead, "%d %d %d %d", &class_num, &pid, &priority, &burstTime) != EOF)
     {
-        // scanf("%d %d %d %d", &class_num, &pid, &priority, &burstTime);
         myThread *mythread = (myThread *)malloc(sizeof(myThread));
         mythread->classNumber = class_num;
         mythread->pid = pid;
         mythread->priority = priority;
         mythread->burstTime = burstTime;
+
         QueueNode *node = (QueueNode *)malloc(sizeof(QueueNode));
         node->my_thread = mythread;
 
@@ -72,13 +78,16 @@ void *workerFunc(void *thread)
 {
     fileWrite = fopen("output.txt", "a");
     myThread *th = (myThread *)thread;
+
     for (int i = 0; i < th->burstTime; i++)
     {
         fprintf(fileWrite, "%d ", th->pid);
         printf("%d ", th->pid);
     }
+
     fprintf(fileWrite, "\n");
     printf("\n");
+
     fclose(fileWrite);
     pthread_exit(0);
 }

@@ -1,3 +1,9 @@
+/*
+    Written by: SOPHOT KY 
+    Date: 2020. 05. 30
+    Inha University
+    OS Assignment
+*/
 
 #include <stdlib.h>
 #include <stdbool.h>
